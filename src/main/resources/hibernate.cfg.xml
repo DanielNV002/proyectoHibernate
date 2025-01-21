@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<!-- Hibernate Configuration XML -->
+
+<hibernate-configuration>
+
+    <!-- Configuración de la conexión a la base de datos -->
+    <session-factory>
+
+        <!-- JDBC Config -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property> <!-- Driver JDBC -->
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/AnimaLost</property> <!-- URL de la base de datos -->
+        <property name="hibernate.connection.username">root</property> <!-- Nombre de usuario -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> <!-- Dialecto para MySQL -->
+
+        <property name="hibernate.show_sql">true</property> <!-- Muestra las consultas SQL en la consola -->
+        <property name="hibernate.hbm2ddl.auto">update</property> <!-- Esto actualiza el esquema de la base de datos según las entidades -->
+
+        <!-- Entities -->
+        <mapping class="org.example.entities.animal"/>
+        <mapping class="org.example.entities.familiAcogida"/>
+
+    </session-factory>
+
+</hibernate-configuration>
