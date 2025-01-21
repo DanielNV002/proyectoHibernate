@@ -18,9 +18,6 @@ public interface animalDAO {
 
     List<animal> findAll();
 
-    //@return devuelve el animal por su id
-    animal findById(Integer id);
-
     //@return devuelve un animal por su especie
     List<animal> findByEspecie(String especie);
 
@@ -28,7 +25,8 @@ public interface animalDAO {
     animal create(animal animal);
 
     // Actualizar
-    animal update(animal animal);
+    boolean updateEstadoById(int id, String estado);
+
 
     /**
      * @param id

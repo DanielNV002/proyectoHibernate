@@ -7,10 +7,4 @@ import org.junit.Test;
 
 public class animalTest {
 
-    @Test
-    public void createTablesTest(){
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        Session session = sessionFactory.openSession();
-    }
-
 }

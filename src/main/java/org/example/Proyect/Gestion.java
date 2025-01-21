@@ -1,10 +1,27 @@
 package org.example.Proyect;
 
+import org.example.DAO.animalDAO;
+import org.example.DAO.animalDAOImpl;
+import org.example.Util.HibernateUtil;
 import org.example.entities.animal;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Gestion {
+
+    // Metodo para capitalizar la primera letra
+    public static String capitalize(String input) {
+        if (input == null || input.isEmpty()) {
+            return input; // Si el string es nulo o vacío, no hace nada
+        }
+        // Capitalizar la primera letra y convertir el resto a minúsculas
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
 
     //Metodo para registrar nuevo animal
     void registro(){
@@ -13,16 +30,86 @@ public class Gestion {
         animal A = new animal();
 
         System.out.println("Introduzca los datos para el registro");
-        System.out.println("Nombre: ");
-        A.setNombre(in.nextLine());
-        System.out.println("Especie: ");
-        A.setEspecie(in.nextLine());
-        System.out.println("Edad: ");
+        System.out.print("Nombre: ");
+        A.setNombre(capitalize(in.nextLine()));
+
+        System.out.print("Especie: ");
+        A.setEspecie(capitalize(in.nextLine()));
+
+        System.out.print("Edad: ");
         A.setEdad(in.nextInt());
-        System.out.println("Descripcion de como se perdio: ");
+
+        in.nextLine();
+
+        System.out.print("Descripcion de como se perdio: ");
         A.setdescripcionPerdida(in.nextLine());
 
+        // Creamos el nuevo animal
         A = new animal(null, A.getNombre(), A.getEspecie(), A.getEdad(), A.getdescripcionPerdida());
+        // Llamamos a la interfaz para trabajar
+        animalDAO animal = new animalDAOImpl();
+        // Añadimos el animal a la BBDD
+        animal.create(A);
+    }
+
+    // Metodo para mostrar todas las especies registradas
+    public void mostrarEspecies() {
+        // Obtener la sesión de Hibernate
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        try {
+            // Iniciar una transacción
+            session.beginTransaction();
+
+            // Consulta HQL para obtener todos los animales
+            String hql = "SELECT DISTINCT a.especie FROM animal a"; // Query para obtener especies únicas
+            Query<String> query = session.createQuery(hql, String.class);
+
+            // Ejecutar la consulta y obtener los resultados
+            List<String> especies = query.list();
+
+            // Mostrar las especies
+            if (especies.isEmpty()) {
+                System.out.println("No hay especies registradas.");
+            } else {
+                System.out.println("Especies registradas:");
+                System.out.print(" | ");
+                for (String especie : especies) {
+                    System.out.print(especie + " | ");
+                }
+                System.out.println();
+            }
+
+            // Finalizar la transacción
+            session.getTransaction().commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Cerrar la sesión
+            session.close();
+        }
+    }
+
+    //Metodo para buscar por especie
+    public void buscarByEspecie() {
+        Scanner in = new Scanner(System.in);
+
+        mostrarEspecies();
+        System.out.println("Introduce la especie de búsqueda:");
+        String especie = capitalize(in.nextLine());  // Leemos la especie que se quiere buscar
+
+        // Llamamos a la interfaz para trabajar
+        animalDAO animal = new animalDAOImpl();
+        // Buscamos la especie en la BBDD
+        animal.findByEspecie(especie);
+    }
+
+    //Metodo para cambiar el estado de un animal
+    public void actualizarEstado(){
+
+        System.out.println("Introduzca el ID del animal: ");
 
 
     }

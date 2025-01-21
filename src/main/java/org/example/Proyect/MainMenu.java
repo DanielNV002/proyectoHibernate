@@ -1,9 +1,15 @@
 package org.example.Proyect;
 
+import org.example.Util.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
 import java.util.Scanner;
 
 public class MainMenu {
     public static void main(String[] args) {
+        // Creamos las tablas de la BBDD
+        crearTablas();
 
         Scanner in = new Scanner(System.in);
 
@@ -30,17 +36,19 @@ public class MainMenu {
             switch (eleccion){
                 case 0:
                     System.out.println("\n --- Hasta Pronto ---");
-                    G.registro();
                     System.exit(0);
                     break;
                 case 1:
                     System.out.println("\n --- Registrar ---");
+                    G.registro();
                     break;
                 case 2:
                     System.out.println("\n --- Buscar por especie ---");
+                    G.buscarByEspecie();
                     break;
                 case 3:
                     System.out.println("\n --- Actuaizar estado ---");
+                    G.actualizarEstado();
                     break;
                 case 4:
                     System.out.println("\n --- Datos de Familiares ---");
@@ -50,6 +58,10 @@ public class MainMenu {
                     break;
             }
         }
+    }
 
+    public static void crearTablas(){
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
     }
 }
