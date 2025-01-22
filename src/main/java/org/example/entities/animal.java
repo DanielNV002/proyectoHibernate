@@ -22,15 +22,18 @@ public class animal implements Serializable {
 
     private String descripcionPerdida;
 
+    private String estado;
+
     //constructores
     public animal(){};
 
-    public animal(Integer id, String nombre, String especie, Integer edad, String descripcionPerdida) {
+    public animal(Integer id, String nombre, String especie, Integer edad, String descripcionPerdida, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.especie = especie;
         this.edad = edad;
         this.descripcionPerdida = descripcionPerdida;
+        this.estado = estado;
     }
 
     //getter y setter
@@ -67,12 +70,20 @@ public class animal implements Serializable {
         this.edad = edad;
     }
 
-    public String getdescripcionPerdida() {
+    public String getDescripcionPerdida() {
         return descripcionPerdida;
     }
 
-    public void setdescripcionPerdida(String descripcionPerdida) {
+    public void setDescripcionPerdida(String descripcionPerdida) {
         this.descripcionPerdida = descripcionPerdida;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     //toString
@@ -85,6 +96,7 @@ public class animal implements Serializable {
                 ", especie='" + especie + '\'' +
                 ", edad=" + edad +
                 ", descripcionPerdida='" + descripcionPerdida + '\'' +
+                ", estado='" + estado + '\'' +
                 '}';
     }
 }

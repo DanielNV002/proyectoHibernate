@@ -42,10 +42,13 @@ public class Gestion {
         in.nextLine();
 
         System.out.print("Descripcion de como se perdio: ");
-        A.setdescripcionPerdida(in.nextLine());
+        A.setDescripcionPerdida(in.nextLine());
+
+        System.out.print("Estado del animal: ");
+        A.setEstado(in.nextLine());
 
         // Creamos el nuevo animal
-        A = new animal(null, A.getNombre(), A.getEspecie(), A.getEdad(), A.getdescripcionPerdida());
+        A = new animal(null, A.getNombre(), A.getEspecie(), A.getEdad(), A.getDescripcionPerdida(), A.getEstado());
         // Llamamos a la interfaz para trabajar
         animalDAO animal = new animalDAOImpl();
         // Añadimos el animal a la BBDD
@@ -108,9 +111,43 @@ public class Gestion {
 
     //Metodo para cambiar el estado de un animal
     public void actualizarEstado(){
+        Scanner in = new Scanner(System.in);
+
+        String estadoA = "";
 
         System.out.println("Introduzca el ID del animal: ");
+        Integer id = in.nextInt();
 
+        System.out.println("""
+                      ╔═════════════════════════════════════════╗
+                      ║  1. Recien abandonado                   ║
+                      ║  2. Tiempo en el refugio                ║
+                      ║  3. Proximamente en acogida             ║
+                      ║  0. Salir                               ║
+                      ╚═════════════════════════════════════════╝
+                """);
+        System.out.println("Introduzca el nuevo estado: ");
+        Integer estado = in.nextInt();
+
+        switch (estado){
+            case 1:
+                estadoA = "Recien abandonado";
+                break;
+            case 2:
+                estadoA = "Tiempo en el refugio";
+                break;
+            case 3:
+                estadoA = "Proximamente en acogida";
+                break;
+            default:
+                System.out.println("--- OPCION NO VALIDA ---");
+                break;
+        }
+
+        // Llamamos a la interfaz para trabajar
+        animalDAO animal = new animalDAOImpl();
+        // Actualizamos el estado del animal deseado
+        animal.updateEstadoById(id, estadoA);
 
     }
 }
