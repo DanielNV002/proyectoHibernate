@@ -10,6 +10,42 @@ import java.util.List;
 
 public class animalDAOImpl implements animalDAO {
 
+    @Override
+    public boolean updateEstadoById(int id, String estado) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            // Iniciar la transacción
+            transaction = session.beginTransaction();
+
+            // Usamos HQL para actualizar solo el estado del animal por su ID
+            String hql = "UPDATE animal SET estado = :estado WHERE id = :animalId";
+            int result = session.createQuery(hql)
+                    .setParameter("estado", estado)
+                    .setParameter("animalId", id)
+                    .executeUpdate();
+
+            // Si se actualizó al menos un registro, confirmamos
+            if (result > 0) {
+                transaction.commit();
+                System.out.println("Estado del animal actualizado correctamente.");
+                return true;
+            } else {
+                System.out.println("No se encontró el animal con ID: " + id);
+                return false;
+            }
+
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();  // Deshacer si hay un error
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();  // Cerrar la sesión
+        }
+    }
+
     /**
      * Obtiene todos los animales perdidos.
      */
@@ -106,28 +142,28 @@ public class animalDAOImpl implements animalDAO {
     }
 
     @Override
-    public boolean updateEstadoById(int id, String estado) {
+    public Integer findById(Integer id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
+        Integer animalId = null;
+
         try {
             // Iniciar la transacción
             transaction = session.beginTransaction();
 
-            // Usamos HQL para actualizar solo el estado del animal por su ID
-            String hql = "UPDATE animal SET estado = :estado WHERE id = :animalId";
-            int result = session.createQuery(hql)
-                    .setParameter("estado", estado)
-                    .setParameter("animalId", id)
-                    .executeUpdate();
+            // Usamos HQL para obtener el animal por su ID
+            String hql = "FROM Animal WHERE id = :animalId";  // Usar el nombre de la clase 'Animal'
+            animal animal = (animal) session.createQuery(hql)
+                    .setParameter("animalId", id)  // Pasar el ID del animal
+                    .uniqueResult();  // Obtener el resultado único
 
-            // Si se actualizó al menos un registro, confirmamos
-            if (result > 0) {
+            // Verificamos si se encontró el animal
+            if (animal != null) {
+                animalId = animal.getId();  // Obtener el ID del animal
                 transaction.commit();
-                System.out.println("Estado del animal actualizado correctamente.");
-                return true;
+                System.out.println("Animal encontrado: ID = " + animalId);
             } else {
                 System.out.println("No se encontró el animal con ID: " + id);
-                return false;
             }
 
         } catch (Exception e) {
@@ -135,18 +171,11 @@ public class animalDAOImpl implements animalDAO {
                 transaction.rollback();  // Deshacer si hay un error
             }
             e.printStackTrace();
-            return false;
         } finally {
             session.close();  // Cerrar la sesión
         }
+
+        return animalId;  // Devolver el ID del animal o null si no se encuentra
     }
 
-    /**
-     * @param id
-     * @return borra un id concreto
-     */
-    @Override
-    public boolean deleteById(Integer id) {
-        return false;
-    }
 }

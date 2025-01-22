@@ -27,11 +27,6 @@ public interface animalDAO {
     // Actualizar
     boolean updateEstadoById(int id, String estado);
 
-
-    /**
-     * @param id
-     * @return borra un id concreto
-     */
-    boolean deleteById(Integer id);
-
+    // encontrar por ID
+    Integer findById(Integer id);
 }

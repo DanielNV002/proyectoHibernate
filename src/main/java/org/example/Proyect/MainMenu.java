@@ -25,7 +25,9 @@ public class MainMenu {
                       ║  1. Registrar un animal perdido         ║
                       ║  2. Buscar animales por especie         ║
                       ║  3. Actualizar estado                   ║
-                      ║  4. Ver datos de la familia de acogida  ║
+                      ║  4. Registrar Familia                   ║
+                      ║  5. Ver datos de la familia de acogida  ║
+                      ║  6. Hacer adopcion                      ║
                       ║  0. Salir                               ║
                       ╚═════════════════════════════════════════╝
                 """);
@@ -51,10 +53,19 @@ public class MainMenu {
                     G.actualizarEstado();
                     break;
                 case 4:
+                    System.out.println("\n --- Registrar Familia ---");
+                    G.registroFamilia();
+                    break;
+                case 5:
                     System.out.println("\n --- Datos de Familiares ---");
+                    G.verDatosFamilia();
+                    break;
+                case 6:
+                    System.out.println("\n --- Hacer Adopcion ---");
+                    G.hacerAdopcion();
                     break;
                 default:
-                    System.out.println("\n Eleccion no valida");
+                    System.out.println("\n --- ELECCION NO VALIDA --- ");
                     break;
             }
         }

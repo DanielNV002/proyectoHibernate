@@ -78,15 +78,29 @@ public class familiAcogida implements Serializable {
     }
 
     //toString
-
     @Override
     public String toString() {
-        return "familiAcogida{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", ciudad='" + ciudad + '\'' +
-                ", edad=" + edad +
-                ", idAnimal=" + idAnimal +
-                '}';
+
+        // Encabezados de la tabla
+        String header = String.format("%-20s %-20s %-10s %-10s\n", "Nombre", "Ciudad", "Edad", "ID Animal")
+                + ("══════════════════════════════════════════════════════════════════\n");
+        String row;
+
+        if(idAnimal == null){
+            // Datos de la fila
+            row = String.format("%-20s %-20s %-10d %-10s\n", nombre, ciudad, edad, null)
+                    + ("══════════════════════════════════════════════════════════════════\n");
+
+            // Unimos encabezado y fila
+        }else{
+            // Datos de la fila
+            row = String.format("%-20s %-20s %-10d %-10d\n", nombre, ciudad, edad, idAnimal.getId())
+                    + ("══════════════════════════════════════════════════════════════════\n");
+
+            // Unimos encabezado y fila
+        }
+        return header + row;
     }
+
+
 }

@@ -2,11 +2,12 @@ package org.example.Proyect;
 
 import org.example.DAO.animalDAO;
 import org.example.DAO.animalDAOImpl;
+import org.example.DAO.familiaDAOImpl;
 import org.example.Util.HibernateUtil;
 import org.example.entities.animal;
+import org.example.entities.familiAcogida;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class Gestion {
     }
 
     //Metodo para registrar nuevo animal
-    void registro(){
+    public void registro() {
 
         Scanner in = new Scanner(System.in);
         animal A = new animal();
@@ -110,7 +111,7 @@ public class Gestion {
     }
 
     //Metodo para cambiar el estado de un animal
-    public void actualizarEstado(){
+    public void actualizarEstado() {
         Scanner in = new Scanner(System.in);
 
         String estadoA = "";
@@ -118,36 +119,97 @@ public class Gestion {
         System.out.println("Introduzca el ID del animal: ");
         Integer id = in.nextInt();
 
-        System.out.println("""
-                      ╔═════════════════════════════════════════╗
-                      ║  1. Recien abandonado                   ║
-                      ║  2. Tiempo en el refugio                ║
-                      ║  3. Proximamente en acogida             ║
-                      ║  0. Salir                               ║
-                      ╚═════════════════════════════════════════╝
-                """);
-        System.out.println("Introduzca el nuevo estado: ");
-        Integer estado = in.nextInt();
+        Integer estado = 10;
 
-        switch (estado){
-            case 1:
-                estadoA = "Recien abandonado";
-                break;
-            case 2:
-                estadoA = "Tiempo en el refugio";
-                break;
-            case 3:
-                estadoA = "Proximamente en acogida";
-                break;
-            default:
-                System.out.println("--- OPCION NO VALIDA ---");
-                break;
+        while (estado != 0) {
+            System.out.println("""
+                          ╔═════════════════════════════════════════╗
+                          ║  1. Recien abandonado                   ║
+                          ║  2. Tiempo en el refugio                ║
+                          ║  3. Proximamente en acogida             ║
+                          ║  0. Salir                               ║
+                          ╚═════════════════════════════════════════╝
+                    """);
+            System.out.println("Introduzca el nuevo estado: ");
+            estado = in.nextInt();
+
+            switch (estado) {
+                case 0:
+                    System.out.println(" --- SALIENDO ---");
+                    break;
+                case 1:
+                    estadoA = "Recien abandonado";
+                    break;
+                case 2:
+                    estadoA = "Tiempo en el refugio";
+                    break;
+                case 3:
+                    estadoA = "Proximamente en acogida";
+                    break;
+                default:
+                    System.out.println("--- OPCION NO VALIDA ---");
+                    break;
+            }
+
+            if (estado != 0) {
+                // Llamamos a la interfaz para trabajar
+                animalDAO animal = new animalDAOImpl();
+                // Actualizamos el estado del animal deseado
+                animal.updateEstadoById(id, estadoA);
+            }
         }
+    }
+
+    //Metodo para registrar nueva familia
+    public void registroFamilia() {
+
+        Scanner in = new Scanner(System.in);
+        familiAcogida A = new familiAcogida();
+
+        System.out.println("Introduzca los datos para el registro");
+        System.out.print("Nombre: ");
+        A.setNombre(capitalize(in.nextLine()));
+
+        System.out.print("Ciudad: ");
+        A.setCiudad(capitalize(in.nextLine()));
+
+        System.out.print("Edad: ");
+        A.setEdad(in.nextInt());
+
+        // Creamos el nuevo animal
+        A = new familiAcogida(null, A.getNombre(), A.getCiudad(), A.getEdad(), null);
+        // Llamamos a la interfaz para trabajar
+        familiaDAOImpl familia = new familiaDAOImpl();
+        // Añadimos el animal a la BBDD
+        familia.create(A);
+    }
+
+    //Metodo para ver los datos de la familia de acogida
+    public void verDatosFamilia() {
+        // Llamamos a la interfaz para trabajar
+        familiaDAOImpl familia = new familiaDAOImpl();
+        // Vemos todas las familais de la BBDD
+        List<familiAcogida> lista = familia.findAll();
+        for(familiAcogida a: lista){
+            System.out.print(a);
+        }
+    }
+
+    //Metodo para realizar la adopcion
+    public void hacerAdopcion(){
+
+        Scanner in = new Scanner(System.in);
 
         // Llamamos a la interfaz para trabajar
-        animalDAO animal = new animalDAOImpl();
-        // Actualizamos el estado del animal deseado
-        animal.updateEstadoById(id, estadoA);
+        familiaDAOImpl familia = new familiaDAOImpl();
+        // Pedimos los datos
+        System.out.print("Introduce el id del animal a adoptar: ");
+        Integer idAnimal = in.nextInt();
+        System.out.print("Introduce el id de la familia que adopta: ");
+        Integer idFamilia = in.nextInt();
+
+        // Metodo para hacer la adopcion
+        familia.hacerAdopcion(idFamilia, idAnimal);
 
     }
 }
