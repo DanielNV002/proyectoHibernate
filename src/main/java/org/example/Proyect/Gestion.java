@@ -202,6 +202,9 @@ public class Gestion {
 
         // Llamamos a la interfaz para trabajar
         familiaDAOImpl familia = new familiaDAOImpl();
+        // Llamamos a la interfaz para trabajar
+        animalDAO animal = new animalDAOImpl();
+
         // Pedimos los datos
         System.out.print("Introduce el id del animal a adoptar: ");
         Integer idAnimal = in.nextInt();
@@ -209,7 +212,7 @@ public class Gestion {
         Integer idFamilia = in.nextInt();
 
         // Metodo para hacer la adopcion
-        familia.hacerAdopcion(idFamilia, idAnimal);
+        familia.hacerAdopcion(idFamilia, animal.findById(idAnimal));
 
     }
 }

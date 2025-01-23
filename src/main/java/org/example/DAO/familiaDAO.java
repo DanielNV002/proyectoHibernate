@@ -1,5 +1,6 @@
 package org.example.DAO;
 
+import org.example.entities.animal;
 import org.example.entities.familiAcogida;
 
 import java.util.List;
@@ -26,5 +27,5 @@ public interface familiaDAO {
      * @param idAnimal
      * @return  Modifica el id del animal acogido a la familia
      */
-    familiAcogida hacerAdopcion(Integer id, Integer idAnimal);
+    familiAcogida hacerAdopcion(Integer id, animal idAnimal);
 }

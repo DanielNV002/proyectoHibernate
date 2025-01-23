@@ -1,6 +1,7 @@
 package org.example.DAO;
 
 import org.example.Util.HibernateUtil;
+import org.example.entities.animal;
 import org.example.entities.familiAcogida;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -71,12 +72,10 @@ public class familiaDAOImpl implements familiaDAO {
      * @return Modifica el id del animal acogido a la familia
      */
     @Override
-    public familiAcogida hacerAdopcion(Integer id, Integer idAnimal) {
+    public familiAcogida hacerAdopcion(Integer id, animal idAnimal) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         familiAcogida adopcion = null;
-
-        animalDAOImpl.findById(idAnimal);
 
         try {
             // Iniciar la transacción

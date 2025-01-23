@@ -28,5 +28,5 @@ public interface animalDAO {
     boolean updateEstadoById(int id, String estado);
 
     // encontrar por ID
-    Integer findById(Integer id);
+    animal findById(Integer id);
 }

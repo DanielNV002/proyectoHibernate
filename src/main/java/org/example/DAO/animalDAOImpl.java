@@ -142,29 +142,28 @@ public class animalDAOImpl implements animalDAO {
     }
 
     @Override
-    public Integer findById(Integer id) {
+    public animal findById(Integer id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        Integer animalId = null;
+        animal animal = null;
 
         try {
             // Iniciar la transacción
             transaction = session.beginTransaction();
 
             // Usamos HQL para obtener el animal por su ID
-            String hql = "FROM Animal WHERE id = :animalId";  // Usar el nombre de la clase 'Animal'
-            animal animal = (animal) session.createQuery(hql)
-                    .setParameter("animalId", id)  // Pasar el ID del animal
+            String hql = "FROM animal WHERE id = :id";
+            animal = (animal) session.createQuery(hql, animal.class)
+                    .setParameter("id", id)  // Pasar el ID del animal
                     .uniqueResult();  // Obtener el resultado único
 
-            // Verificamos si se encontró el animal
+            // Confirmar la transacción si el animal fue encontrado
             if (animal != null) {
-                animalId = animal.getId();  // Obtener el ID del animal
-                transaction.commit();
-                System.out.println("Animal encontrado: ID = " + animalId);
+                System.out.println("Animal encontrado: " + animal.getNombre());
             } else {
                 System.out.println("No se encontró el animal con ID: " + id);
             }
+            transaction.commit();
 
         } catch (Exception e) {
             if (transaction != null) {
@@ -175,7 +174,8 @@ public class animalDAOImpl implements animalDAO {
             session.close();  // Cerrar la sesión
         }
 
-        return animalId;  // Devolver el ID del animal o null si no se encuentra
+        return animal;  // Devolver el objeto animal o null si no se encuentra
     }
+
 
 }
