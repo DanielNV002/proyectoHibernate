@@ -1,3 +1,11 @@
+/**
+ * La clase Gestion proporciona métodos para gestionar animales y familias de acogida
+ * en un sistema de adopción y refugio. Permite registrar animales y familias, actualizar
+ * estados de animales, buscar animales por especie, realizar adopciones y más.
+ *
+ * @version 1.0
+ * @author Daniel Navarro
+ */
 package org.example.Proyect;
 
 import org.example.DAO.animalDAO;
@@ -15,18 +23,24 @@ import java.util.Scanner;
 
 public class Gestion {
 
-    // Metodo para capitalizar la primera letra
+    /**
+     * Capitaliza la primera letra de una cadena y convierte el resto a minúsculas.
+     *
+     * @param input Cadena de texto a capitalizar.
+     * @return Cadena con la primera letra en mayúscula y el resto en minúsculas.
+     */
     public static String capitalize(String input) {
         if (input == null || input.isEmpty()) {
-            return input; // Si el string es nulo o vacío, no hace nada
+            return input;
         }
-        // Capitalizar la primera letra y convertir el resto a minúsculas
         return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 
-    //Metodo para registrar nuevo animal
+    /**
+     * Registra un nuevo animal en la base de datos. Solicita los datos al usuario
+     * y crea un nuevo objeto {@link animal} que luego se almacena en la base de datos.
+     */
     public void registro() {
-
         Scanner in = new Scanner(System.in);
         animal A = new animal();
 
@@ -48,34 +62,30 @@ public class Gestion {
         System.out.print("Estado del animal: ");
         A.setEstado(in.nextLine());
 
-        // Creamos el nuevo animal
         A = new animal(null, A.getNombre(), A.getEspecie(), A.getEdad(), A.getDescripcionPerdida(), A.getEstado());
-        // Llamamos a la interfaz para trabajar
         animalDAO animal = new animalDAOImpl();
-        // Añadimos el animal a la BBDD
         animal.create(A);
     }
 
-    // Metodo para mostrar todas las especies registradas
-    public void mostrarEspecies() {
-        // Obtener la sesión de Hibernate
+    /**
+     * Muestra todas las especies registradas en la base de datos. Devuelve true
+     * si hay especies registradas, de lo contrario, devuelve false.
+     *
+     * @return true si hay especies registradas, false en caso contrario.
+     */
+    public boolean mostrarEspecies() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
 
         try {
-            // Iniciar una transacción
             session.beginTransaction();
-
-            // Consulta HQL para obtener todos los animales
-            String hql = "SELECT DISTINCT a.especie FROM animal a"; // Query para obtener especies únicas
+            String hql = "SELECT DISTINCT a.especie FROM animal a";
             Query<String> query = session.createQuery(hql, String.class);
-
-            // Ejecutar la consulta y obtener los resultados
             List<String> especies = query.list();
 
-            // Mostrar las especies
             if (especies.isEmpty()) {
                 System.out.println("No hay especies registradas.");
+                return false;
             } else {
                 System.out.println("Especies registradas:");
                 System.out.print(" | ");
@@ -83,34 +93,41 @@ public class Gestion {
                     System.out.print(especie + " | ");
                 }
                 System.out.println();
+                return true;
             }
-
-            // Finalizar la transacción
-            session.getTransaction().commit();
 
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+
         } finally {
-            // Cerrar la sesión
             session.close();
         }
     }
 
-    //Metodo para buscar por especie
+    /**
+     * Permite buscar animales por especie. Solicita al usuario la especie a buscar
+     * y muestra los resultados obtenidos de la base de datos.
+     */
     public void buscarByEspecie() {
         Scanner in = new Scanner(System.in);
 
-        mostrarEspecies();
-        System.out.println("Introduce la especie de búsqueda:");
-        String especie = capitalize(in.nextLine());  // Leemos la especie que se quiere buscar
+        boolean hayEspecies = mostrarEspecies();
+        if (!hayEspecies) {
+            System.out.println("No hay especies para buscar.");
+            return;
+        }
 
-        // Llamamos a la interfaz para trabajar
+        System.out.println("Introduce la especie de búsqueda:");
+        String especie = capitalize(in.nextLine());
         animalDAO animal = new animalDAOImpl();
-        // Buscamos la especie en la BBDD
         animal.findByEspecie(especie);
     }
 
-    //Metodo para cambiar el estado de un animal
+    /**
+     * Permite actualizar el estado de un animal. Solicita al usuario el ID del animal
+     * y elige un nuevo estado entre las opciones disponibles.
+     */
     public void actualizarEstado() {
         Scanner in = new Scanner(System.in);
 
@@ -152,17 +169,17 @@ public class Gestion {
             }
 
             if (estado != 0) {
-                // Llamamos a la interfaz para trabajar
                 animalDAO animal = new animalDAOImpl();
-                // Actualizamos el estado del animal deseado
                 animal.updateEstadoById(id, estadoA);
             }
         }
     }
 
-    //Metodo para registrar nueva familia
+    /**
+     * Registra una nueva familia de acogida en la base de datos. Solicita los datos
+     * al usuario y crea un nuevo objeto {@link familiAcogida} que se almacena en la base de datos.
+     */
     public void registroFamilia() {
-
         Scanner in = new Scanner(System.in);
         familiAcogida A = new familiAcogida();
 
@@ -176,43 +193,37 @@ public class Gestion {
         System.out.print("Edad: ");
         A.setEdad(in.nextInt());
 
-        // Creamos el nuevo animal
         A = new familiAcogida(null, A.getNombre(), A.getCiudad(), A.getEdad(), null);
-        // Llamamos a la interfaz para trabajar
         familiaDAOImpl familia = new familiaDAOImpl();
-        // Añadimos el animal a la BBDD
         familia.create(A);
     }
 
-    //Metodo para ver los datos de la familia de acogida
+    /**
+     * Muestra los datos de todas las familias de acogida registradas en la base de datos.
+     */
     public void verDatosFamilia() {
-        // Llamamos a la interfaz para trabajar
         familiaDAOImpl familia = new familiaDAOImpl();
-        // Vemos todas las familais de la BBDD
         List<familiAcogida> lista = familia.findAll();
-        for(familiAcogida a: lista){
+        for (familiAcogida a : lista) {
             System.out.print(a);
         }
     }
 
-    //Metodo para realizar la adopcion
-    public void hacerAdopcion(){
-
+    /**
+     * Realiza una adopción asignando un animal a una familia de acogida. Solicita
+     * al usuario el ID del animal y de la familia para realizar la adopción.
+     */
+    public void hacerAdopcion() {
         Scanner in = new Scanner(System.in);
 
-        // Llamamos a la interfaz para trabajar
         familiaDAOImpl familia = new familiaDAOImpl();
-        // Llamamos a la interfaz para trabajar
         animalDAO animal = new animalDAOImpl();
 
-        // Pedimos los datos
         System.out.print("Introduce el id del animal a adoptar: ");
         Integer idAnimal = in.nextInt();
         System.out.print("Introduce el id de la familia que adopta: ");
         Integer idFamilia = in.nextInt();
 
-        // Metodo para hacer la adopcion
         familia.hacerAdopcion(idFamilia, animal.findById(idAnimal));
-
     }
 }

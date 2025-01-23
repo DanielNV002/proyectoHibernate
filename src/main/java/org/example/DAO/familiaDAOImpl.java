@@ -8,39 +8,53 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
+/**
+ * Implementación de la interfaz {@link familiaDAO} para realizar operaciones CRUD
+ * sobre la entidad {@link familiAcogida} utilizando Hibernate.
+ *
+ * Esta clase incluye métodos para:
+ * - Consultar todas las familias de acogida.
+ * - Registrar una nueva familia de acogida.
+ * - Asignar un animal a una familia de acogida para realizar la adopción.
+ *
+ * Las transacciones y sesiones de Hibernate son manejadas cuidadosamente para
+ * garantizar que los datos sean consistentes y para manejar errores de manera adecuada.
+ */
 public class familiaDAOImpl implements familiaDAO {
+
     /**
-     * @return todas las familias de acogida
+     * Obtiene todas las familias de acogida registradas en la base de datos.
+     *
+     * @return Una lista de objetos {@link familiAcogida} que representan todas las familias de acogida.
+     * Si no hay familias registradas, devuelve una lista vacía.
      */
     @Override
     public List<familiAcogida> findAll() {
-        // Abrir una sesión
         Session session = HibernateUtil.getSessionFactory().openSession();
-        // Iniciar una transacción
         Transaction transaction = null;
         List<familiAcogida> familia = null;
 
         try {
-            // Comenzar transacción
             transaction = session.beginTransaction();
-            // Consulta HQL para obtener todas las familias
             familia = session.createQuery("from familiAcogida", familiAcogida.class).list();
-            // Confirmar la transacción (en este caso no es necesario, ya que solo leemos)
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer la transacción en caso de error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
         return familia;
     }
 
     /**
-     * @param familiAcogida
-     * @return Crea una nueva familia de acogida
+     * Registra una nueva familia de acogida en la base de datos.
+     *
+     * @param familiAcogida El objeto {@link familiAcogida} que contiene los datos de la nueva familia de acogida.
+     * @return El objeto {@link familiAcogida} registrado en la base de datos, con su ID asignado.
+     * En caso de error, se devuelve el mismo objeto sin cambios.
      */
     @Override
     public familiAcogida create(familiAcogida familiAcogida) {
@@ -48,28 +62,28 @@ public class familiaDAOImpl implements familiaDAO {
         Transaction transaction = null;
 
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
-            // Guardar la nueva familia
             session.persist(familiAcogida);
-            // Confirmar transacción
             transaction.commit();
             System.out.println(" --- Familia registrada exitosamente --- ");
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer si hay un error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
         return familiAcogida;
     }
 
     /**
-     * @param id
-     * @param idAnimal
-     * @return Modifica el id del animal acogido a la familia
+     * Asigna un animal a una familia de acogida para realizar la adopción.
+     *
+     * @param id El ID de la familia de acogida.
+     * @param idAnimal El objeto {@link animal} que se desea asignar a la familia de acogida.
+     * @return El objeto {@link familiAcogida} actualizado con el nuevo animal asignado.
+     * Si no se encuentra la familia de acogida con el ID proporcionado, devuelve {@code null}.
      */
     @Override
     public familiAcogida hacerAdopcion(Integer id, animal idAnimal) {
@@ -78,18 +92,15 @@ public class familiaDAOImpl implements familiaDAO {
         familiAcogida adopcion = null;
 
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
 
-            // Usamos HQL para actualizar solo el estado del animal por su ID
             String hql = "UPDATE familiAcogida SET idAnimal = :idAnimal WHERE id = :id";
             int result = session.createQuery(hql)
                     .setParameter("idAnimal", idAnimal)
                     .setParameter("id", id)
                     .executeUpdate();
-            // Si se actualizó al menos un registro, confirmamos
+
             if (result > 0) {
-                // Obtener el objeto actualizado
                 adopcion = session.get(familiAcogida.class, id);
                 transaction.commit();
                 System.out.println("Adopción realizada correctamente.");
@@ -98,13 +109,12 @@ public class familiaDAOImpl implements familiaDAO {
             }
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer si hay un error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
-        return adopcion;  // Devolver el objeto actualizado o null si no se encontró
+        return adopcion;
     }
-
 }

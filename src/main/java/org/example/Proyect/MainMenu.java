@@ -1,3 +1,11 @@
+/**
+ * Clase MainMenu que representa el menú principal de la aplicación AnimaLost.
+ * Esta clase proporciona un menú interactivo que permite gestionar animales perdidos,
+ * familias de acogida y realizar adopciones.
+ *
+ * @version 1.0
+ * @author Daniel Navarro
+ */
 package org.example.Proyect;
 
 import org.example.Util.HibernateUtil;
@@ -7,20 +15,24 @@ import org.hibernate.SessionFactory;
 import java.util.Scanner;
 
 public class MainMenu {
+
+    /**
+     * Método principal que inicia la aplicación AnimaLost y muestra el menú interactivo.
+     * @param args Argumentos de la línea de comandos (no utilizados).
+     */
     public static void main(String[] args) {
-        // Creamos las tablas de la BBDD
+        // Crear las tablas de la base de datos al iniciar la aplicación
         crearTablas();
 
         Scanner in = new Scanner(System.in);
-
         Gestion G = new Gestion();
 
         int eleccion = 1;
 
         System.out.println("\n --- Bienvenido a AnimaLost ---");
 
-        while (eleccion != 0){
-        System.out.println("""
+        while (eleccion != 0) {
+            System.out.println("""
                       ╔═════════════════════════════════════════╗
                       ║  1. Registrar un animal perdido         ║
                       ║  2. Buscar animales por especie         ║
@@ -32,10 +44,10 @@ public class MainMenu {
                       ╚═════════════════════════════════════════╝
                 """);
 
-        System.out.print("Opcion: ");
-        eleccion = in.nextInt();
+            System.out.print("Opcion: ");
+            eleccion = in.nextInt();
 
-            switch (eleccion){
+            switch (eleccion) {
                 case 0:
                     System.out.println("\n --- Hasta Pronto ---");
                     System.exit(0);
@@ -49,7 +61,7 @@ public class MainMenu {
                     G.buscarByEspecie();
                     break;
                 case 3:
-                    System.out.println("\n --- Actuaizar estado ---");
+                    System.out.println("\n --- Actualizar estado ---");
                     G.actualizarEstado();
                     break;
                 case 4:
@@ -71,7 +83,11 @@ public class MainMenu {
         }
     }
 
-    public static void crearTablas(){
+    /**
+     * Método para crear las tablas necesarias en la base de datos.
+     * Se ejecuta al inicio de la aplicación.
+     */
+    public static void crearTablas() {
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         Session session = sessionFactory.openSession();
     }

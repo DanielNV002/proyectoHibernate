@@ -8,24 +8,31 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
+/**
+ * Implementación de la interfaz {@code animalDAO} para realizar operaciones CRUD
+ * relacionadas con la entidad {@code animal} en la base de datos.
+ */
 public class animalDAOImpl implements animalDAO {
 
+    /**
+     * Actualiza el estado de un animal en la base de datos identificado por su ID.
+     *
+     * @param id El ID del animal que se desea actualizar.
+     * @param estado El nuevo estado que se desea asignar al animal.
+     * @return {@code true} si la operación fue exitosa, {@code false} en caso contrario.
+     */
     @Override
     public boolean updateEstadoById(int id, String estado) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
-
-            // Usamos HQL para actualizar solo el estado del animal por su ID
             String hql = "UPDATE animal SET estado = :estado WHERE id = :animalId";
             int result = session.createQuery(hql)
                     .setParameter("estado", estado)
                     .setParameter("animalId", id)
                     .executeUpdate();
 
-            // Si se actualizó al menos un registro, confirmamos
             if (result > 0) {
                 transaction.commit();
                 System.out.println("Estado del animal actualizado correctamente.");
@@ -37,48 +44,46 @@ public class animalDAOImpl implements animalDAO {
 
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer si hay un error
+                transaction.rollback();
             }
             e.printStackTrace();
             return false;
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
     }
 
     /**
-     * Obtiene todos los animales perdidos.
+     * Obtiene todos los animales perdidos registrados en la base de datos.
+     *
+     * @return Lista de objetos {@code animal}.
      */
     @Override
     public List<animal> findAll() {
-        // Abrir una sesión
         Session session = HibernateUtil.getSessionFactory().openSession();
-        // Iniciar una transacción
         Transaction transaction = null;
         List<animal> animales = null;
 
         try {
-            // Comenzar transacción
             transaction = session.beginTransaction();
-            // Consulta HQL para obtener todos los animales
             animales = session.createQuery("from animal", animal.class).list();
-            // Confirmar la transacción (en este caso no es necesario, ya que solo leemos)
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer la transacción en caso de error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
         return animales;
     }
 
     /**
-     * Obtiene los animales por especie.
+     * Encuentra y devuelve una lista de animales según la especie especificada.
      *
-     * @param especie Especie que se va a buscar.
+     * @param especie Especie que se desea buscar.
+     * @return Lista de objetos {@code animal} que coinciden con la especie.
      */
     @Override
     public List<animal> findByEspecie(String especie) {
@@ -87,19 +92,18 @@ public class animalDAOImpl implements animalDAO {
         List<animal> animales = null;
 
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
-            // Crear consulta HQL para buscar animales por especie
             String hql = "from animal a where a.especie = :especie";
             Query<animal> query = session.createQuery(hql, animal.class);
-            query.setParameter("especie", especie);  // Establecer el parámetro de especie
-            animales = query.list();  // Obtener la lista de animales que coinciden
+            query.setParameter("especie", especie);
+            animales = query.list();
+
             System.out.print(" | ");
             for (animal a : animales) {
                 System.out.print(a.getNombre() + " | ");
             }
             System.out.println();
-            // Confirmar transacción
+
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -107,7 +111,7 @@ public class animalDAOImpl implements animalDAO {
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
         return animales;
     }
@@ -115,7 +119,8 @@ public class animalDAOImpl implements animalDAO {
     /**
      * Crea un nuevo animal en la base de datos.
      *
-     * @param animal El objeto animal que se quiere persistir.
+     * @param animal El objeto {@code animal} que se desea persistir.
+     * @return El objeto {@code animal} creado.
      */
     @Override
     public animal create(animal animal) {
@@ -123,24 +128,27 @@ public class animalDAOImpl implements animalDAO {
         Transaction transaction = null;
 
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
-            // Guardar el nuevo animal
             session.persist(animal);
-            // Confirmar transacción
             transaction.commit();
             System.out.println(" --- Animal registrado exitosamente --- ");
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer si hay un error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
         return animal;
     }
 
+    /**
+     * Encuentra un animal por su ID.
+     *
+     * @param id El ID del animal que se desea buscar.
+     * @return El objeto {@code animal} encontrado, o {@code null} si no existe.
+     */
     @Override
     public animal findById(Integer id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -148,16 +156,12 @@ public class animalDAOImpl implements animalDAO {
         animal animal = null;
 
         try {
-            // Iniciar la transacción
             transaction = session.beginTransaction();
-
-            // Usamos HQL para obtener el animal por su ID
             String hql = "FROM animal WHERE id = :id";
             animal = (animal) session.createQuery(hql, animal.class)
-                    .setParameter("id", id)  // Pasar el ID del animal
-                    .uniqueResult();  // Obtener el resultado único
+                    .setParameter("id", id)
+                    .uniqueResult();
 
-            // Confirmar la transacción si el animal fue encontrado
             if (animal != null) {
                 System.out.println("Animal encontrado: " + animal.getNombre());
             } else {
@@ -167,15 +171,13 @@ public class animalDAOImpl implements animalDAO {
 
         } catch (Exception e) {
             if (transaction != null) {
-                transaction.rollback();  // Deshacer si hay un error
+                transaction.rollback();
             }
             e.printStackTrace();
         } finally {
-            session.close();  // Cerrar la sesión
+            session.close();
         }
 
-        return animal;  // Devolver el objeto animal o null si no se encuentra
+        return animal;
     }
-
-
 }
